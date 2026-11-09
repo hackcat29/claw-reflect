@@ -15,6 +15,15 @@ def create_celery_app(settings: Settings) -> Celery:
         {
             "broker_url": settings.redis_url,
             "result_backend": settings.redis_url,
+            # A worker process only imports this module; without `include` it never
+            # loads the task modules, rejects every job as an unregistered task
+            # (KeyError in the consumer) and never runs the beat schedule.
+            "include": [
+                "claw_reflect.workers.tasks.reflect",
+                "claw_reflect.workers.tasks.decay",
+                "claw_reflect.workers.tasks.score",
+                "claw_reflect.workers.tasks.profile",
+            ],
             "task_serializer": "json",
             "result_serializer": "json",
             "accept_content": ["json"],
