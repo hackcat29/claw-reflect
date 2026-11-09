@@ -13,14 +13,6 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
 ]
 
-[project.urls]
-Homepage = "https://github.com/Claw-DB/claw-reflect"
-Repository = "https://github.com/Claw-DB/claw-reflect"
-Issues = "https://github.com/Claw-DB/claw-reflect/issues"
-
-[project.scripts]
-claw-reflect = "claw_reflect.main:main"
-
 dependencies = [
     "fastapi>=0.111",
     "uvicorn[standard]>=0.30",
@@ -49,6 +41,15 @@ dependencies = [
     "opentelemetry-instrumentation-redis>=0.51b0",
     "opentelemetry-exporter-otlp-proto-grpc>=1.30.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/Claw-DB/claw-reflect"
+Repository = "https://github.com/Claw-DB/claw-reflect"
+Issues = "https://github.com/Claw-DB/claw-reflect/issues"
+
+[project.scripts]
+claw-reflect = "claw_reflect.main:main"
+
 
 [project.optional-dependencies]
 dev = [
