@@ -57,19 +57,24 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
+def _do_run_migrations(connection) -> None:  # noqa: ANN001
+    """Configure and run inside one transaction that is committed on exit.
+
+    Running the migrations outside ``begin_transaction()`` left them
+    uncommitted: SQLAlchemy 2.0 rolled everything back when the connection
+    closed, so a migrated PostgreSQL database ended up with no tables.
+    """
+    context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)
+    with context.begin_transaction():
+        context.run_migrations()
+
+
 async def run_migrations_online_async() -> None:
     """Run migrations in *online* mode using an AsyncEngine."""
     connectable = create_async_engine(settings.database_url, echo=False)
 
     async with connectable.connect() as connection:
-        await connection.run_sync(
-            lambda conn: context.configure(
-                connection=conn,
-                target_metadata=target_metadata,
-                compare_type=True,
-            )
-        )
-        await connection.run_sync(lambda _: context.run_migrations())
+        await connection.run_sync(_do_run_migrations)
 
     await connectable.dispose()
 

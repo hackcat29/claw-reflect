@@ -28,13 +28,16 @@ TABLES_WITH_WORKSPACE = (
 )
 
 
-def _normalize_workspace_ids() -> None:
+def _normalize_workspace_ids(dialect_name: str) -> None:
+    # PostgreSQL receives the bound value as text and refuses to assign it to a
+    # uuid column without a cast; on SQLite a CAST to "uuid" would mangle it.
+    sentinel = "CAST(:sentinel AS uuid)" if dialect_name == "postgresql" else ":sentinel"
     for table_name in TABLES_WITH_WORKSPACE:
         op.execute(
             sa.text(
                 f"""
                 UPDATE {table_name}
-                SET workspace_id = :sentinel
+                SET workspace_id = {sentinel}
                 WHERE workspace_id IS NULL
                    OR workspace_id NOT IN (SELECT workspace_id FROM api_keys)
                 """
@@ -46,7 +49,7 @@ def upgrade() -> None:
     bind = op.get_bind()
     dialect_name = bind.dialect.name
 
-    _normalize_workspace_ids()
+    _normalize_workspace_ids(dialect_name)
 
     if dialect_name == "postgresql":
         op.execute("ALTER TABLE agent_profiles DROP CONSTRAINT IF EXISTS agent_profiles_pkey")
