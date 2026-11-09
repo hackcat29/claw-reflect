@@ -24,6 +24,7 @@ from starlette.requests import Request
 from starlette.responses import Response
 
 from alembic import command
+from claw_reflect.api.admin import router as admin_router
 from claw_reflect.api.v1.router import v1_router
 from claw_reflect.app_state import set_scheduler
 from claw_reflect.config import settings
@@ -169,6 +170,7 @@ def create_app() -> FastAPI:
         RedisInstrumentor().instrument()
 
     app.include_router(v1_router, prefix="/api/v1")
+    app.include_router(admin_router, prefix="/admin", tags=["admin"])
     return app
 
 

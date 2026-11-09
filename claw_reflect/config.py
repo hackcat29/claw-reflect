@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     llm_provider: str = "anthropic"  # anthropic | openai | ollama
     llm_model: str = "claude-sonnet-4-20250514"
     llm_api_key: SecretStr  # REFLECT_LLM_API_KEY
+    # Bearer token for the platform's /admin routes (minting workspace API
+    # keys). Unset disables them.
+    admin_token: SecretStr | None = None  # REFLECT_ADMIN_TOKEN
     llm_base_url: str | None = None  # for Ollama or custom endpoints
     llm_max_tokens: int = 2048
     llm_timeout_secs: float = 30.0
