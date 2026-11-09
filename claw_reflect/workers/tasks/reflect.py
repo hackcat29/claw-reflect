@@ -57,22 +57,35 @@ def reflect_agent_task(
     agent_id: str,
     job_type: str = "full",
     options: dict[str, object] | None = None,
+    job_id: str | None = None,
 ) -> dict[str, object]:
-    """Create a reflection job row, run pipeline, and persist final status."""
+    """Run the pipeline for a job and persist its final status.
+
+    When the API already created a job row (``job_id``), that row is updated, so
+    the id returned to the caller reflects the real outcome. Otherwise (the
+    scheduler) a new row is created.
+    """
 
     async def _run() -> dict[str, object]:
         workspace_uuid = UUID(workspace_id)
         async with session_factory() as session:
-            job = ReflectionJob(
-                id=_new_id(),
-                workspace_id=workspace_uuid,
-                agent_id=agent_id,
-                status="running",
-                job_type=job_type,
-                started_at=datetime.now(UTC),
-                metadata_={"celery_task_id": self.request.id, "options": options or {}},
-            )
-            session.add(job)
+            job = await session.get(ReflectionJob, job_id) if job_id else None
+            # Never adopt a row that belongs to another workspace.
+            if job is not None and job.workspace_id == workspace_uuid:
+                job.status = "running"
+                job.started_at = datetime.now(UTC)
+                job.metadata_ = {**(job.metadata_ or {}), "celery_task_id": self.request.id, "options": options or {}}
+            else:
+                job = ReflectionJob(
+                    id=_new_id(),
+                    workspace_id=workspace_uuid,
+                    agent_id=agent_id,
+                    status="running",
+                    job_type=job_type,
+                    started_at=datetime.now(UTC),
+                    metadata_={"celery_task_id": self.request.id, "options": options or {}},
+                )
+                session.add(job)
             await session.commit()
 
         try:

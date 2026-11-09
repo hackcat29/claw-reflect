@@ -92,7 +92,8 @@ async def trigger_reflection(
         await session.commit()
 
         try:
-            task = reflect_agent_task.delay(str(workspace_id), body.agent_id, body.job_type, body.options)
+            # The job id is passed so the task updates the row returned to the caller.
+            task = reflect_agent_task.delay(str(workspace_id), body.agent_id, body.job_type, body.options, job.id)
         except TypeError:
             # Compatibility with legacy test doubles expecting old signature.
             task = reflect_agent_task.delay(body.agent_id, body.job_type, body.options)
