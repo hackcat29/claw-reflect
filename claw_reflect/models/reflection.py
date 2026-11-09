@@ -17,14 +17,14 @@ class ReflectionJob(Base):
 
     __tablename__ = "reflection_jobs"
 
-    id: Mapped[str] = mapped_column(String(26), primary_key=True)
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
     workspace_id: Mapped[uuid.UUID] = mapped_column(
         Uuid,
         nullable=False,
         index=True,
         default=lambda: uuid.UUID("00000000-0000-0000-0000-000000000000"),
     )
-    agent_id: Mapped[str] = mapped_column(String(26), nullable=False, index=True)
+    agent_id: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
     status: Mapped[str] = mapped_column(
         String(16), nullable=False, default="pending", index=True
     )  # pending | running | completed | failed
@@ -69,7 +69,7 @@ class ReflectionResult(Base):
 
     __tablename__ = "reflection_results"
 
-    id: Mapped[str] = mapped_column(String(26), primary_key=True)
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
     workspace_id: Mapped[uuid.UUID] = mapped_column(
         Uuid,
         nullable=False,
@@ -77,9 +77,9 @@ class ReflectionResult(Base):
         default=lambda: uuid.UUID("00000000-0000-0000-0000-000000000000"),
     )
     job_id: Mapped[str] = mapped_column(
-        String(26), ForeignKey("reflection_jobs.id", ondelete="CASCADE"), nullable=False, index=True
+        String(128), ForeignKey("reflection_jobs.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    memory_id: Mapped[str] = mapped_column(String(26), nullable=False, index=True)
+    memory_id: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
     result_type: Mapped[str] = mapped_column(
         String(32), nullable=False, index=True
     )  # summary | preference | contradiction | duplicate

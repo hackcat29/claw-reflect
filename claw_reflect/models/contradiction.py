@@ -17,17 +17,17 @@ class ContradictionRecord(Base):
 
     __tablename__ = "contradiction_records"
 
-    id: Mapped[str] = mapped_column(String(26), primary_key=True)
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
     workspace_id: Mapped[uuid.UUID] = mapped_column(
         Uuid,
         nullable=False,
         index=True,
         default=lambda: uuid.UUID("00000000-0000-0000-0000-000000000000"),
     )
-    agent_id: Mapped[str] = mapped_column(String(26), nullable=False, index=True)
+    agent_id: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
 
-    memory_id_a: Mapped[str] = mapped_column(String(26), nullable=False)
-    memory_id_b: Mapped[str] = mapped_column(String(26), nullable=False)
+    memory_id_a: Mapped[str] = mapped_column(String(128), nullable=False)
+    memory_id_b: Mapped[str] = mapped_column(String(128), nullable=False)
 
     field: Mapped[str] = mapped_column(String(128), nullable=False)
     value_a: Mapped[Any] = mapped_column(JSON, nullable=False)
@@ -40,7 +40,7 @@ class ContradictionRecord(Base):
     resolved: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
     resolution_strategy: Mapped[str | None] = mapped_column(String(32), nullable=True)  # keep_a | keep_b | merge | discard_both
     resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    winner_memory_id: Mapped[str | None] = mapped_column(String(26), nullable=True)
+    winner_memory_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
 
     def __repr__(self) -> str:
         return f"<ContradictionRecord id={self.id!r} agent={self.agent_id!r} field={self.field!r} resolved={self.resolved!r}>"

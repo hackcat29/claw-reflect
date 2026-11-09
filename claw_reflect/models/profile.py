@@ -25,7 +25,7 @@ class AgentProfile(Base):
         default=lambda: uuid.UUID("00000000-0000-0000-0000-000000000000"),
         primary_key=True,
     )
-    agent_id: Mapped[str] = mapped_column(String(26), primary_key=True)
+    agent_id: Mapped[str] = mapped_column(String(128), primary_key=True)
     preferences: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
     facts: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
     behaviour_patterns: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)

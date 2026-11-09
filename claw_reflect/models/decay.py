@@ -17,15 +17,15 @@ class DecayRecord(Base):
 
     __tablename__ = "decay_records"
 
-    id: Mapped[str] = mapped_column(String(26), primary_key=True)
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
     workspace_id: Mapped[uuid.UUID] = mapped_column(
         Uuid,
         nullable=False,
         index=True,
         default=lambda: uuid.UUID("00000000-0000-0000-0000-000000000000"),
     )
-    memory_id: Mapped[str] = mapped_column(String(26), nullable=False, index=True)
-    agent_id: Mapped[str] = mapped_column(String(26), nullable=False)
+    memory_id: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
+    agent_id: Mapped[str] = mapped_column(String(128), nullable=False)
     decay_policy: Mapped[str] = mapped_column(String(32), nullable=False)
     score_before: Mapped[float] = mapped_column(Float, nullable=False)
     score_after: Mapped[float] = mapped_column(Float, nullable=False)

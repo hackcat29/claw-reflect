@@ -20,14 +20,14 @@ class ExtractedPreference(Base):
         UniqueConstraint("workspace_id", "agent_id", "category", "key", name="uq_preference_workspace_agent_cat_key"),
     )
 
-    id: Mapped[str] = mapped_column(String(26), primary_key=True)
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
     workspace_id: Mapped[uuid.UUID] = mapped_column(
         Uuid,
         nullable=False,
         index=True,
         default=lambda: uuid.UUID("00000000-0000-0000-0000-000000000000"),
     )
-    agent_id: Mapped[str] = mapped_column(String(26), nullable=False, index=True)
+    agent_id: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
     category: Mapped[str] = mapped_column(String(64), nullable=False)
     key: Mapped[str] = mapped_column(String(128), nullable=False)
     value: Mapped[Any] = mapped_column(JSON, nullable=False)
